@@ -474,20 +474,25 @@ class SearchTemplateDecodesQueryString(SearchTest):
                          expected_facets)
 
 class FacetsFilterResults(SearchTest):
+    def setUp(self):
+        self.python_project = Project.create_dummy(language='Python')
+        self.python_bug = Bug.create_dummy(project=python_project)
+
+        self.not_python_project = Project.create_dummy(language='Nohtyp')
+        self.not_python_bug = Bug.create_dummy(project=not_python_project)
+
+
     def test_facets_filter_results(self):
         facets = {u'language': u'Python'}
 
-        # Those facets should pick up this bug:
-        python_project = Project.create_dummy(language='Python')
-        python_bug = Bug.create_dummy(project=python_project)
-
-        # But not this bug
-        not_python_project = Project.create_dummy(language='Nohtyp')
-        Bug.create_dummy(project=not_python_project)
-
         results = mysite.search.view_helpers.Query(
                 terms=[], active_facet_options=facets).get_bugs_unordered()
-        self.assertEqual(list(results), [python_bug])
+        self.assertEqual(list(results), [self.python_bug])
+
+    def test_any_facet(self):
+        results = mysite.search.view_helpers.Query(
+                terms=[], active_facet_options={}).get_bugs_unordered()
+        self.assertEqual(list(results), [self.python_bug, self.not_python_bug])
 
 class QueryGetPossibleFacets(SearchTest):
     """Ask a query, what facets are you going to show on the left?
