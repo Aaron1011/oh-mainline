@@ -475,11 +475,12 @@ class SearchTemplateDecodesQueryString(SearchTest):
 
 class FacetsFilterResults(SearchTest):
     def setUp(self):
+        SearchTest.setUp(self)
         self.python_project = Project.create_dummy(language='Python')
-        self.python_bug = Bug.create_dummy(project=python_project)
+        self.python_bug = Bug.create_dummy(project=self.python_project)
 
         self.not_python_project = Project.create_dummy(language='Nohtyp')
-        self.not_python_bug = Bug.create_dummy(project=not_python_project)
+        self.not_python_bug = Bug.create_dummy(project=self.not_python_project)
 
 
     def test_facets_filter_results(self):

@@ -84,7 +84,8 @@ class Query:
         for facet in possible_facets:
             if GET.get(facet):
                 active_facet_options[facet] = GET.get(facet)
-            else:
+            elif GET.get(facet) == '':  # Only select any_facet if a facet is
+                # empty string, not None
                 any_facet = True
         terms_string = GET.get('q', u'')
         terms = Query.split_into_terms(terms_string)
