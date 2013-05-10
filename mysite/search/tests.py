@@ -491,9 +491,13 @@ class FacetsFilterResults(SearchTest):
         self.assertEqual(list(results), [self.python_bug])
 
     def test_any_facet(self):
-        results = mysite.search.view_helpers.Query(
-                terms=[], active_facet_options={}).get_bugs_unordered()
-        self.assertEqual(list(results), [self.python_bug, self.not_python_bug])
+        language_query = mysite.search.view_helpers.Query.create_from_GET_data(
+                {'language': ''})
+        project_query = mysite.search.view_helpers.Query.create_from_GET_data(
+                {'project': ''})
+
+        self.assertTrue(language_query)
+        self.assertTrue(project_query)
 
 class QueryGetPossibleFacets(SearchTest):
     """Ask a query, what facets are you going to show on the left?
