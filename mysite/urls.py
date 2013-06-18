@@ -375,9 +375,11 @@ urlpatterns = patterns('',
 
         (r'^\+do/search.views.subscribe_to_bug_alert_do$', 'mysite.search.views.subscribe_to_bug_alert_do'),
 
-        (r'^\+projects/', include('mysite.project.urls')),
+        (r'^projects/', include('mysite.project.urls')),
 
-        (r'^\projects/', lambda x: HttpResponseRedirect('/+projects/')),
+        (r'^\+projects/', lambda x: HttpResponsePermanentRedirect('/projects/')),
+
+        (r'^ projects/', lambda x: HttpResponsePermanentRedirect('/projects/')),
 
         (r'^\+project/(?P<project__name>.+)', 'mysite.project.views.redirect_project_to_projects'),
 
@@ -402,6 +404,9 @@ urlpatterns = patterns('',
 
         # the OpenHatch events page
         (r'^events/$', direct_to_template, {'template': 'base/events.html'}),
+
+        # the OpenHatch sponsors page
+        (r'^sponsors/$', direct_to_template, {'template': 'base/sponsors.html'}),
 
         # the OpenHatch donate page
         (r'^donate/$', direct_to_template, {'template': 'base/donate.html'}),
