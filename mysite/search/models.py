@@ -37,6 +37,8 @@ import voting
 import mysite.customs.ohloh
 import mysite.base.depends
 import mysite.base.decorators
+import django.contrib.contenttypes.models
+
 
 class OpenHatchModel(models.Model):
     created_date = models.DateTimeField(null=True, auto_now_add=True)
@@ -572,7 +574,7 @@ class Bug(OpenHatchModel):
     as_appears_in_distribution = models.CharField(max_length=200, default='')
 
     tracker_type = models.ForeignKey(ContentType, null=True)
-    tracker_id = models.PositiveIntegerField(null=True)
+    tracker_id = models.PositiveIntegerField(null=False)
     tracker = generic.GenericForeignKey('tracker_type', 'tracker_id')
 
     all_bugs = models.Manager()
@@ -588,16 +590,32 @@ class Bug(OpenHatchModel):
 
     @staticmethod
     def create_dummy(**kwargs):
+        # If there is no TracTrackerModel, we are going to need one. So, we
+        # create one.
+        if not mysite.customs.models.TracTrackerModel.objects.all():
+            ttm = mysite.customs.models.TracTrackerModel.objects.create()
+        else:
+            ttm = mysite.customs.models.TracTrackerModel.objects.all()[0]
+
+        # And if there is no corresponding ContentType, well, we are going
+        # to need it.
+        content_type, _ = (
+            django.contrib.contenttypes.models.ContentType.objects.get_or_create(
+                app_label="search", model="tractrackermodel"))
+
         now = datetime.datetime.utcnow()
         n = str(Bug.all_bugs.count())
         # FIXME (?) Project.objects.all()[0] call below makes an out-of-bounds error in testing...
-        data = dict(title=n, project=Project.objects.all()[0],
-                date_reported=now,
-                last_touched=now,
-                last_polled=now,
-                canonical_bug_link="http://asdf.com/" + uuid.uuid4().hex,
-                submitter_username='dude',
-                description='')
+        data = dict(
+            title=n, project=Project.objects.all()[0],
+            tracker_id=ttm.id,
+            tracker_type=content_type,
+            date_reported=now,
+            last_touched=now,
+            last_polled=now,
+            canonical_bug_link="http://asdf.com/" + uuid.uuid4().hex,
+            submitter_username='dude',
+            description='')
         data.update(kwargs)
         ret = Bug(**data)
         ret.save()
