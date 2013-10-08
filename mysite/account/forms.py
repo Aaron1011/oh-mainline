@@ -132,11 +132,13 @@ class EditPhotoForm(django.forms.ModelForm):
         ### If PIL is missing, proceed by providing the default
         ### profile image.
         if not mysite.base.depends.Image:
+            print "Skipping!"
             ## FIXME This is fail-safe, not fail-secure, behavior.
             ## If an image is too big, and the Python Imaging Library
             ## is not installed, we simply do not resize it.E
             logging.info("NOTE: We cannot resize this image, so we are going to pass it through. See ADVANCED_INSTALLATION.mkd for information on PIL.")
             return self.cleaned_data['photo']
+        print "Didn't skip!"
 
         # Safe copy of data...
         self.cleaned_data['photo'].seek(0)
