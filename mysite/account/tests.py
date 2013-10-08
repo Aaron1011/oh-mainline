@@ -316,6 +316,7 @@ class EditPhoto(TwillTests):
         tc.submit()
         tc.code(200)
 
+        print "Tc.show: ", tc.show()
         self.assert_("Something went wrong while preparing this" in tc.show())
         p = Person.objects.get(user__username='paulproteus')
         self.assertFalse(p.photo.name)
