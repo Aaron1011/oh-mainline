@@ -8,7 +8,7 @@ install:
 # Now, regular pip install for PIL
  - pip install Pillow
 # command to run tests
-script: python manage.py test
+script: python manage.py test account.EditPhoto.test_image_processing_library_error
 # Get development headers for PIL
 before_install:
  - sudo apt-get update -qq
