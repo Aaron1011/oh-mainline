@@ -3,8 +3,8 @@ python:
   - "2.6"
   - "2.7"
 install:
-# Install coveralls to test code coverage
- - sudo pip install coveralls
+# Install coveralls to test code coverage, and lxml
+ - sudo pip install coveralls lxml
 # Copy libz.so into the virtualenv so that PIL can build PNG support
  - sudo cp /usr/lib/*/libz.so $VIRTUAL_ENV/lib
 # command to run tests
@@ -14,7 +14,7 @@ before_install:
  - deactivate # We are having problems with using Pillow in a virtualenv
  - sudo apt-get update -qq
  - sudo apt-get build-dep -qq python-imaging
- - sudo apt-get install libjpeg-dev
+ - sudo apt-get install libjpeg-dev libxml2-dev libxslt-dev
  - git config --global user.name TravisDummy
  - git config --global user.email dummy@travis-ci.orgo
 
